@@ -4,7 +4,7 @@
 set -e
 BASE="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$BASE/src/retronism"
-LIBS="$BASE/../../libraries"
+LIBS="$BASE/../../../libraries"
 DEST="$BASE/mcp/minecraft/src/net/minecraft/src"
 
 # Remove old transpiled mod files (only Retronism_ prefixed + Aero_ prefixed + mod_Retronism)
