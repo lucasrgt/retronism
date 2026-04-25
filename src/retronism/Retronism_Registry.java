@@ -92,6 +92,12 @@ public class Retronism_Registry {
 	public static final Retronism_BlockMachinePort machinePortBlock = (Retronism_BlockMachinePort) (new Retronism_BlockMachinePort(216, 45))
 		.setBlockName("retroNismMachinePort");
 
+	public static final Block vfxDemoBlock = (new Retronism_BlockVFXDemo(217, 73))
+		.setHardness(1.0F)
+		.setResistance(5.0F)
+		.setStepSound(Block.soundMetalFootstep)
+		.setBlockName("retroNismVFXDemo");
+
 	public static final Item testItem = (new Retronism_ItemTest(500))
 		.setIconIndex(7 + 3 * 16)
 		.setItemName("retroNismTestItem");
@@ -145,6 +151,7 @@ public class Retronism_Registry {
 		ModLoader.RegisterBlock(megaCrusherPortBlock);
 		ModLoader.RegisterBlock(heavyCrusherControllerBlock);
 		ModLoader.RegisterBlock(machinePortBlock, Retronism_ItemBlockMachinePort.class);
+		ModLoader.RegisterBlock(vfxDemoBlock);
 
 		// Tile Entities
 		ModLoader.RegisterTileEntity(Retronism_TileCrusher.class, "Crusher");
@@ -179,6 +186,7 @@ public class Retronism_Registry {
 		ModLoader.AddName(megaCrusherPortBlock, "Mega Crusher Port");
 		ModLoader.AddName(heavyCrusherControllerBlock, "Heavy Crusher Controller");
 		ModLoader.AddName(machinePortBlock, "Basic Machine Port");
+		ModLoader.AddName(vfxDemoBlock, "VFX Demo Block");
 
 		// Names - Items
 		ModLoader.AddName(testItem, "Retronism Test Item");

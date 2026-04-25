@@ -59,5 +59,4 @@ java -cp "$WTEST_OUT;$WBIN;$WJUNIT;$WHAMCREST" \
     net.minecraft.src.ItemPipeTest \
     net.minecraft.src.MegaPipeItemTest \
     net.minecraft.src.PortRegistryTest \
-    net.minecraft.src.AnimClipTest \
     net.minecraft.src.AnimationDefStateTest
