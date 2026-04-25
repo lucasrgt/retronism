@@ -3,13 +3,9 @@ package retronism.render;
 import net.minecraft.src.*;
 import retronism.Retronism_Registry;
 import retronism.tile.Retronism_TileMegaCrusher;
-import aero.modellib.Aero_JsonModel;
-import aero.modellib.Aero_JsonModelLoader;
 import aero.modellib.Aero_InventoryRenderer;
 
 public class Retronism_RenderMegaCrusher implements Retronism_IBlockRenderer {
-
-    public static final Aero_JsonModel MODEL = Aero_JsonModelLoader.load("/models/MegaCrusher.aero.json");
 
     public boolean renderWorld(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block) {
         if (block == Retronism_Registry.megaCrusherCoreBlock) {
@@ -27,7 +23,7 @@ public class Retronism_RenderMegaCrusher implements Retronism_IBlockRenderer {
         if (block == Retronism_Registry.testBlock) {
             Retronism_TileMegaCrusher core = findNearbyCore(world, x, y, z);
             if (core != null && core.validateStructure()) {
-                return true; 
+                return true;
             }
             renderer.renderStandardBlock(block, x, y, z);
             return true;
@@ -59,10 +55,19 @@ public class Retronism_RenderMegaCrusher implements Retronism_IBlockRenderer {
     }
 
     public void renderInventory(RenderBlocks renderer, Block block, int metadata) {
-        // Forçar a textura HQ para o inventário
-        int texID = ModLoader.getMinecraftInstance().renderEngine.getTexture("/models/retronism_megacrusher.png");
-        ModLoader.getMinecraftInstance().renderEngine.bindTexture(texID);
-        
-        Aero_InventoryRenderer.render(renderer, MODEL);
+        if (block == Retronism_Registry.megaCrusherCoreBlock) {
+            // Controller shows the full Mega Crusher mesh in the inventory slot
+            // (same OBJ used by the in-world TESR). Bind the high-res model
+            // texture so the panels render correctly inside the slot scale.
+            int texID = ModLoader.getMinecraftInstance().renderEngine.getTexture("/models/retronism_megacrusher.png");
+            ModLoader.getMinecraftInstance().renderEngine.bindTexture(texID);
+            Aero_InventoryRenderer.render(renderer, Retronism_TileEntityRenderMegaCrusher.MODEL);
+            return;
+        }
+
+        // Test Block (structural) renders as a simple cube using its
+        // blockIndexInTexture override (registered in mod_Retronism).
+        float[][] singleBlock = {{0, 0, 0, 16, 16, 16}};
+        Retronism_RenderUtils.renderPartsInventory(renderer, block, singleBlock);
     }
 }

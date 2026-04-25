@@ -14,13 +14,29 @@ cd "$BASE"
 echo "=== Preparing test jar ==="
 cp tests/data/minecraft_test.jar tests/data/minecraft_run.jar
 
-# Inject mod classes from build zip into run jar
-TMP="$BASE/temp_build"
-rm -rf "$TMP" && mkdir -p "$TMP"
-cd "$TMP"
-jar xf "$BASE/mcp/build/minecraft.zip"
-jar uf "$BASE/tests/data/minecraft_run.jar" *.class
-echo "Injected mod classes"
+# Clean reobf: keep only mod classes + vanilla mods we explicitly patch.
+# This prevents recompiled vanilla classes from overwriting the TMI/SPC-patched
+# ones already baked into minecraft_test.jar.
+REOBF="$BASE/mcp/minecraft/reobf"
+if [ -d "$REOBF" ]; then
+    (
+        cd "$REOBF"
+        for f in *.class; do
+            [ -f "$f" ] || continue
+            case "$f" in
+                Retronism_*|Aero_*|mod_*|EntityRendererProxy*|dn.class|nw.class) ;;
+                *) rm -f "$f" ;;
+            esac
+        done
+    )
+    # Inject mod classes (flat, default package) into run jar.
+    # Single jar call with glob; only run if there is anything to inject.
+    KEPT_COUNT=$(find "$REOBF" -maxdepth 1 -name "*.class" | wc -l)
+    if [ "$KEPT_COUNT" -gt 0 ]; then
+        (cd "$REOBF" && jar uf "$BASE/tests/data/minecraft_run.jar" *.class)
+        echo "Injected $KEPT_COUNT mod classes"
+    fi
+fi
 
 # Inject custom textures (and models) into run jar
 if [ -d "$BASE/temp/merged" ]; then
@@ -30,7 +46,6 @@ if [ -d "$BASE/temp/merged" ]; then
 fi
 
 cd "$BASE"
-rm -rf "$TMP"
 
 mkdir -p "$BASE/tests/data/tmp"
 echo "=== Launching Minecraft ==="

@@ -3,6 +3,7 @@ package retronism;
 import net.minecraft.src.*;
 import retronism.render.*;
 import retronism.tile.*;
+import aero.particlelib.*;
 import net.minecraft.client.Minecraft;
 import java.util.HashMap;
 
@@ -38,6 +39,8 @@ public class mod_Retronism extends BaseMod {
 		Retronism_Registry.wrench.setIconIndex(ModLoader.addOverride("/gui/items.png", "/item/retronism_wrench.png"));
 		texCrusher = ModLoader.addOverride("/terrain.png", "/block/retronism_crusher.png");
 		Retronism_Registry.crusherBlock.blockIndexInTexture = texCrusher;
+		Retronism_Registry.testBlock.blockIndexInTexture = ModLoader.addOverride("/terrain.png", "/block/retronism_test_block.png");
+		Retronism_Registry.megaCrusherCoreBlock.blockIndexInTexture = ModLoader.addOverride("/terrain.png", "/block/retronism_megacrusher_core.png");
 		Retronism_Registry.machinePortBlock.texEnergy = ModLoader.addOverride("/terrain.png", "/block/retronism_port_energy.png");
 		Retronism_Registry.machinePortBlock.texFluid = ModLoader.addOverride("/terrain.png", "/block/retronism_port_fluid.png");
 		Retronism_Registry.machinePortBlock.texGas = ModLoader.addOverride("/terrain.png", "/block/retronism_port_gas.png");
@@ -73,6 +76,33 @@ public class mod_Retronism extends BaseMod {
 
 	public void RegisterAnimation(Minecraft game) {
 		ModLoader.addAnimation(new Retronism_TextureGasOverlayFX(GAS_OVERLAY_INDEX));
+	}
+
+	private boolean particlesInitialized = false;
+
+	public boolean OnTickInGame(float partialTick, Minecraft mc) {
+		// Initialize particle textures on first tick (GL context must be ready)
+		if (!particlesInitialized) {
+			Aero_ParticleTextures.init();
+			Aero_ParticleSync.registerBuiltins();
+			particlesInitialized = true;
+		}
+		Aero_ParticleManager.tick();
+		return true;
+	}
+
+	public boolean OnTickInGUI(float partialTick, Minecraft mc, GuiScreen gui) {
+		// Keep ticking particles even in GUIs
+		if (particlesInitialized) {
+			Aero_ParticleManager.tick();
+		}
+		return true;
+	}
+
+	public void OnRenderWorldLast(RenderGlobal renderer, float partialTick) {
+		if (particlesInitialized) {
+			Aero_ParticleManager.render(partialTick);
+		}
 	}
 
 	public String Version() {
