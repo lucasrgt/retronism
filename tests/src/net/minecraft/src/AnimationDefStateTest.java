@@ -21,34 +21,42 @@ public class AnimationDefStateTest {
 
     @Before
     public void setUp() {
-        // Idle clip: 2 seconds, looping, single bone with no movement
-        String[] idleBones = {"body"};
-        float[][] idleRotTimes = { {0f, 2f} };
-        float[][][] idleRotValues = { { {0f, 0f, 0f}, {0f, 0f, 0f} } };
-        float[][] idlePosTimes = { {0f} };
-        float[][][] idlePosValues = { { {0f, 0f, 0f} } };
-        idleClip = new Aero_AnimationClip("idle", true, 2.0f,
-                idleBones, idleRotTimes, idleRotValues, idlePosTimes, idlePosValues);
+        Aero_Easing[] linear2 = {Aero_Easing.LINEAR, Aero_Easing.LINEAR};
+        Aero_Easing[] linear1 = {Aero_Easing.LINEAR};
 
-        // Spin clip: 1 second, looping, fan bone rotates 360 degrees
-        String[] spinBones = {"fan"};
-        float[][] spinRotTimes = { {0f, 1f} };
-        float[][][] spinRotValues = { { {0f, 0f, 0f}, {0f, 360f, 0f} } };
-        float[][] spinPosTimes = { {0f} };
-        float[][][] spinPosValues = { { {0f, 0f, 0f} } };
-        spinClip = new Aero_AnimationClip("spinning", true, 1.0f,
-                spinBones, spinRotTimes, spinRotValues, spinPosTimes, spinPosValues);
+        idleClip = Aero_AnimationClip.builder("idle")
+                .loop(Aero_AnimationLoop.LOOP)
+                .length(2.0f)
+                .bone("body")
+                    .rotation(new float[]{0f, 2f},
+                            new float[][]{{0f, 0f, 0f}, {0f, 0f, 0f}}, linear2)
+                    .position(new float[]{0f},
+                            new float[][]{{0f, 0f, 0f}}, linear1)
+                    .endBone()
+                .build();
 
-        // Short clip: 0.1 second (2 ticks), non-looping
-        String[] shortBones = {"arm"};
-        float[][] shortRotTimes = { {0f, 0.1f} };
-        float[][][] shortRotValues = { { {0f, 0f, 0f}, {90f, 0f, 0f} } };
-        float[][] shortPosTimes = { {0f} };
-        float[][][] shortPosValues = { { {0f, 0f, 0f} } };
-        shortClip = new Aero_AnimationClip("short", false, 0.1f,
-                shortBones, shortRotTimes, shortRotValues, shortPosTimes, shortPosValues);
+        spinClip = Aero_AnimationClip.builder("spinning")
+                .loop(Aero_AnimationLoop.LOOP)
+                .length(1.0f)
+                .bone("fan")
+                    .rotation(new float[]{0f, 1f},
+                            new float[][]{{0f, 0f, 0f}, {0f, 360f, 0f}}, linear2)
+                    .position(new float[]{0f},
+                            new float[][]{{0f, 0f, 0f}}, linear1)
+                    .endBone()
+                .build();
 
-        // Bundle with all clips
+        shortClip = Aero_AnimationClip.builder("short")
+                .loop(Aero_AnimationLoop.PLAY_ONCE)
+                .length(0.1f)
+                .bone("arm")
+                    .rotation(new float[]{0f, 0.1f},
+                            new float[][]{{0f, 0f, 0f}, {90f, 0f, 0f}}, linear2)
+                    .position(new float[]{0f},
+                            new float[][]{{0f, 0f, 0f}}, linear1)
+                    .endBone()
+                .build();
+
         java.util.HashMap clips = new java.util.HashMap();
         clips.put("idle", idleClip);
         clips.put("spinning", spinClip);
@@ -184,7 +192,7 @@ public class AnimationDefStateTest {
         Aero_AnimationState state = def.createState(bundle);
 
         // Assert
-        assertEquals(0, state.currentState);
+        assertEquals(0, state.getCurrentState());
     }
 
     @Test
@@ -233,7 +241,7 @@ public class AnimationDefStateTest {
 
         // Assert — time reset to 0
         assertEquals(0f, state.getInterpolatedTime(1f), EPSILON);
-        assertEquals(1, state.currentState);
+        assertEquals(1, state.getCurrentState());
     }
 
     @Test
@@ -274,7 +282,7 @@ public class AnimationDefStateTest {
 
         // Assert — time NOT reset because clip name didn't change
         assertEquals(timeBefore, state.getInterpolatedTime(1f), EPSILON);
-        assertEquals(1, state.currentState);
+        assertEquals(1, state.getCurrentState());
     }
 
     @Test
@@ -316,8 +324,8 @@ public class AnimationDefStateTest {
         Aero_AnimationDefinition def = new Aero_AnimationDefinition().state(0, "idle");
         Aero_AnimationState state = def.createState(bundle);
 
-        // Act — force currentState to undefined (bypass setState check)
-        state.currentState = 99;
+        // Act — switch to a state with no clip mapping
+        state.setState(99);
         Aero_AnimationClip clip = state.getCurrentClip();
 
         // Assert
@@ -420,7 +428,7 @@ public class AnimationDefStateTest {
         for (int i = 0; i < 5; i++) {
             state.tick();
         }
-        int savedState = state.currentState;
+        int savedState = state.getCurrentState();
         float savedTime = state.getInterpolatedTime(1f);
 
         // Act — write to NBT and read into a fresh state
@@ -431,7 +439,7 @@ public class AnimationDefStateTest {
         restored.readFromNBT(nbt);
 
         // Assert — state and time preserved
-        assertEquals(savedState, restored.currentState);
+        assertEquals(savedState, restored.getCurrentState());
         assertEquals(savedTime, restored.getInterpolatedTime(1f), EPSILON);
     }
 
@@ -476,7 +484,7 @@ public class AnimationDefStateTest {
         state.readFromNBT(emptyNbt);
 
         // Assert — defaults: state=0, time=0
-        assertEquals(0, state.currentState);
+        assertEquals(0, state.getCurrentState());
         assertEquals(0f, state.getInterpolatedTime(1f), EPSILON);
     }
 
@@ -533,32 +541,34 @@ public class AnimationDefStateTest {
     }
 
     @Test
-    public void testBundleGetPivotReturnsExistingPivot() {
+    public void testBundleHasPivotAndGetPivotIntoFillsBuffer() {
         // Arrange — bundle has "fan" pivot at [0.5, 0.5, 0.5]
+        float[] out = new float[3];
 
         // Act
-        float[] pivot = bundle.getPivot("fan");
+        boolean ok = bundle.getPivotInto("fan", out);
 
         // Assert
-        assertNotNull(pivot);
-        assertEquals(3, pivot.length);
-        assertEquals(0.5f, pivot[0], EPSILON);
-        assertEquals(0.5f, pivot[1], EPSILON);
-        assertEquals(0.5f, pivot[2], EPSILON);
+        assertTrue(bundle.hasPivot("fan"));
+        assertTrue(ok);
+        assertEquals(0.5f, out[0], EPSILON);
+        assertEquals(0.5f, out[1], EPSILON);
+        assertEquals(0.5f, out[2], EPSILON);
     }
 
     @Test
-    public void testBundleGetPivotReturnZeroForMissing() {
+    public void testBundleGetPivotIntoMissingReturnsFalseAndLeavesBuffer() {
         // Arrange — bundle has no "leg" pivot
+        float[] out = {99f, 98f, 97f};
 
         // Act
-        float[] pivot = bundle.getPivot("leg");
+        boolean ok = bundle.getPivotInto("leg", out);
 
-        // Assert — should return [0, 0, 0]
-        assertNotNull(pivot);
-        assertEquals(3, pivot.length);
-        assertEquals(0f, pivot[0], EPSILON);
-        assertEquals(0f, pivot[1], EPSILON);
-        assertEquals(0f, pivot[2], EPSILON);
+        // Assert — miss must report false and leave the buffer untouched
+        assertFalse(bundle.hasPivot("leg"));
+        assertFalse(ok);
+        assertEquals(99f, out[0], EPSILON);
+        assertEquals(98f, out[1], EPSILON);
+        assertEquals(97f, out[2], EPSILON);
     }
 }
