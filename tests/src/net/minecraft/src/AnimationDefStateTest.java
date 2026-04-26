@@ -571,4 +571,49 @@ public class AnimationDefStateTest {
         assertEquals(98f, out[1], EPSILON);
         assertEquals(97f, out[2], EPSILON);
     }
+
+    // =======================================================================
+    // NBT key prefix
+    // =======================================================================
+
+    @Test
+    public void testStateNbtCustomKeyPrefixWritesAndRoundTrips() {
+        // Arrange — two states on the same TE that must not collide on NBT keys
+        Aero_AnimationDefinition def = new Aero_AnimationDefinition()
+                .state(0, "idle")
+                .state(1, "spinning");
+        Aero_AnimationState armState = def.createState(bundle, "Arm_");
+        Aero_AnimationState legState = def.createState(bundle, "Leg_");
+
+        armState.setState(1);
+        armState.tick(); armState.tick();
+        legState.setState(0);
+        legState.tick();
+
+        // Act
+        NBTTagCompound nbt = new NBTTagCompound();
+        armState.writeToNBT(nbt);
+        legState.writeToNBT(nbt);
+
+        // Assert — distinct keys, no collision
+        assertTrue(nbt.hasKey("Arm_state"));
+        assertTrue(nbt.hasKey("Arm_time"));
+        assertTrue(nbt.hasKey("Leg_state"));
+        assertTrue(nbt.hasKey("Leg_time"));
+        assertEquals(1, nbt.getInteger("Arm_state"));
+        assertEquals(0, nbt.getInteger("Leg_state"));
+
+        // Read back into fresh states with the same prefixes
+        Aero_AnimationState armRestored = def.createState(bundle, "Arm_");
+        Aero_AnimationState legRestored = def.createState(bundle, "Leg_");
+        armRestored.readFromNBT(nbt);
+        legRestored.readFromNBT(nbt);
+        assertEquals(1, armRestored.getCurrentState());
+        assertEquals(0, legRestored.getCurrentState());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testStateNbtPrefixRejectsEmpty() {
+        new Aero_AnimationDefinition().state(0, "idle").createState(bundle, "");
+    }
 }
