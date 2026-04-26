@@ -665,6 +665,14 @@
           "1.75": {
             "name": "flame",
             "locator": "turbine_r"
+          },
+          "0.4": {
+            "name": "splash",
+            "locator": "hopper_lid"
+          },
+          "1.4": {
+            "name": "splash",
+            "locator": "hopper_lid"
           }
         }
       }

@@ -24,7 +24,7 @@ if [ -d "$REOBF" ]; then
         for f in *.class; do
             [ -f "$f" ] || continue
             case "$f" in
-                Retronism_*|Aero_*|mod_*|EntityRendererProxy*|dn.class|nw.class) ;;
+                Retronism_*|Aero_*|AeroTest_*|mod_*|EntityRendererProxy*|dn.class|nw.class) ;;
                 *) rm -f "$f" ;;
             esac
         done
