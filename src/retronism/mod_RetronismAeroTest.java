@@ -30,6 +30,8 @@ public class mod_RetronismAeroTest extends BaseMod {
 		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.easing_showcase_3");
 	public static final Block plasmaCrystalBlock  = (new AeroTest_PlasmaCrystalBlock(227, 1))
 		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.plasma_crystal");
+	public static final Block conveyorBlock       = (new AeroTest_ConveyorBlock(228, 1))
+		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.conveyor");
 
 	private static final int ROBOT_ENTITY_ID = ModLoader.getUniqueEntityId();
 
@@ -50,6 +52,7 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.RegisterBlock(easingShowcase2Block);
 		ModLoader.RegisterBlock(easingShowcase3Block);
 		ModLoader.RegisterBlock(plasmaCrystalBlock);
+		ModLoader.RegisterBlock(conveyorBlock);
 
 		// Tile entities + their renderers
 		ModLoader.RegisterTileEntity(AeroTest_MotorTile.class,           "aerotest:motor",            new AeroTest_MotorRenderer());
@@ -60,6 +63,7 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.RegisterTileEntity(AeroTest_EasingShowcase2Tile.class, "aerotest:easing_showcase_2",new AeroTest_EasingShowcase2Renderer());
 		ModLoader.RegisterTileEntity(AeroTest_EasingShowcase3Tile.class, "aerotest:easing_showcase_3",new AeroTest_EasingShowcase3Renderer());
 		ModLoader.RegisterTileEntity(AeroTest_PlasmaCrystalTile.class,   "aerotest:plasma_crystal",   new AeroTest_PlasmaCrystalRenderer());
+		ModLoader.RegisterTileEntity(AeroTest_ConveyorTile.class,        "aerotest:conveyor",         new AeroTest_ConveyorRenderer());
 
 		// Entity
 		ModLoader.RegisterEntityID(AeroTest_RobotEntity.class, "aerotest:robot", ROBOT_ENTITY_ID);
@@ -73,6 +77,7 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.AddName(easingShowcase2Block, "AeroTest Easing Showcase 2");
 		ModLoader.AddName(easingShowcase3Block, "AeroTest Easing Showcase 3");
 		ModLoader.AddName(plasmaCrystalBlock,   "AeroTest Plasma Crystal");
+		ModLoader.AddName(conveyorBlock,        "AeroTest Conveyor (UV Anim)");
 
 		// Spawn egg item
 		ModLoader.AddName(robotEgg, "AeroTest Robot Egg");
