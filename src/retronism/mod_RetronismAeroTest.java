@@ -32,6 +32,17 @@ public class mod_RetronismAeroTest extends BaseMod {
 		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.plasma_crystal");
 	public static final Block conveyorBlock       = (new AeroTest_ConveyorBlock(228, 1))
 		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.conveyor");
+	public static final Block spellCircleBlock   = (new AeroTest_SpellCircleBlock(229, 1))
+		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.spell_circle");
+	// IDs 230-238 + 240-255 occupied by beta-energistics. Slot 218, 219 sit
+	// between mod_Retronism (200-217) and aerotest's first showcase (220);
+	// 239 fills beta-energistics's gap between fluid + non-fluid groups.
+	public static final Block turretIkBlock      = (new AeroTest_TurretIKBlock(218, 1))
+		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.turret_ik");
+	public static final Block morphCrystalBlock  = (new AeroTest_MorphCrystalBlock(219, 1))
+		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.morph_crystal");
+	public static final Block graphPoweredBlock  = (new AeroTest_GraphPoweredBlock(239, 1))
+		.setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setBlockName("aerotest.graph_powered");
 
 	private static final int ROBOT_ENTITY_ID = ModLoader.getUniqueEntityId();
 
@@ -53,6 +64,10 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.RegisterBlock(easingShowcase3Block);
 		ModLoader.RegisterBlock(plasmaCrystalBlock);
 		ModLoader.RegisterBlock(conveyorBlock);
+		ModLoader.RegisterBlock(spellCircleBlock);
+		ModLoader.RegisterBlock(turretIkBlock);
+		ModLoader.RegisterBlock(morphCrystalBlock);
+		ModLoader.RegisterBlock(graphPoweredBlock);
 
 		// Tile entities + their renderers
 		ModLoader.RegisterTileEntity(AeroTest_MotorTile.class,           "aerotest:motor",            new AeroTest_MotorRenderer());
@@ -64,6 +79,10 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.RegisterTileEntity(AeroTest_EasingShowcase3Tile.class, "aerotest:easing_showcase_3",new AeroTest_EasingShowcase3Renderer());
 		ModLoader.RegisterTileEntity(AeroTest_PlasmaCrystalTile.class,   "aerotest:plasma_crystal",   new AeroTest_PlasmaCrystalRenderer());
 		ModLoader.RegisterTileEntity(AeroTest_ConveyorTile.class,        "aerotest:conveyor",         new AeroTest_ConveyorRenderer());
+		ModLoader.RegisterTileEntity(AeroTest_SpellCircleTile.class,     "aerotest:spell_circle",     new AeroTest_SpellCircleRenderer());
+		ModLoader.RegisterTileEntity(AeroTest_TurretIKTile.class,        "aerotest:turret_ik",        new AeroTest_TurretIKRenderer());
+		ModLoader.RegisterTileEntity(AeroTest_MorphCrystalTile.class,    "aerotest:morph_crystal",    new AeroTest_MorphCrystalRenderer());
+		ModLoader.RegisterTileEntity(AeroTest_GraphPoweredTile.class,    "aerotest:graph_powered",    new AeroTest_GraphPoweredRenderer());
 
 		// Entity
 		ModLoader.RegisterEntityID(AeroTest_RobotEntity.class, "aerotest:robot", ROBOT_ENTITY_ID);
@@ -78,6 +97,10 @@ public class mod_RetronismAeroTest extends BaseMod {
 		ModLoader.AddName(easingShowcase3Block, "AeroTest Easing Showcase 3");
 		ModLoader.AddName(plasmaCrystalBlock,   "AeroTest Plasma Crystal");
 		ModLoader.AddName(conveyorBlock,        "AeroTest Conveyor (UV Anim)");
+		ModLoader.AddName(spellCircleBlock,    "AeroTest Spell Circle (UV combo)");
+		ModLoader.AddName(turretIkBlock,       "AeroTest Turret (IK CCD)");
+		ModLoader.AddName(morphCrystalBlock,   "AeroTest Morph Crystal");
+		ModLoader.AddName(graphPoweredBlock,   "AeroTest Graph Powered (redstone)");
 
 		// Spawn egg item
 		ModLoader.AddName(robotEgg, "AeroTest Robot Egg");
