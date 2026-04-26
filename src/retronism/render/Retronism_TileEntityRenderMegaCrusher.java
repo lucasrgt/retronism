@@ -50,10 +50,7 @@ public class Retronism_TileEntityRenderMegaCrusher extends TileEntitySpecialRend
                          w.getLightBrightness(ox + 3, oy + 3, oz + 1))
             );
         }
-        Aero_MeshRenderer.renderAnimated(MODEL,
-            Retronism_TileMegaCrusher.BUNDLE,
-            Retronism_TileMegaCrusher.ANIM_DEF,
-            tile.animState,
+        Aero_MeshRenderer.renderAnimated(MODEL, tile.animState,
             d + offsetX, d1 + offsetY, d2 + offsetZ,
             brightness, f);
     }

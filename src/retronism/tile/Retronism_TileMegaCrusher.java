@@ -4,9 +4,10 @@ import net.minecraft.src.*;
 import retronism.*;
 import aero.machineapi.*;
 import retronism.recipe.*;
-import aero.modellib.Aero_AnimationBundle;
-import aero.modellib.Aero_AnimationDefinition;
-import aero.modellib.Aero_AnimationLoader;
+import aero.modellib.Aero_AnimationEventListener;
+import aero.modellib.Aero_AnimationEventRouter;
+import aero.modellib.Aero_AnimationSide;
+import aero.modellib.Aero_AnimationSpec;
 import aero.modellib.Aero_AnimationState;
 
 import java.util.Random;
@@ -24,16 +25,19 @@ public class Retronism_TileMegaCrusher extends TileEntity implements IInventory,
 	private boolean isInvalidating = false;
 	private Random rand = new Random();
 
-	// --- Animation ---
+	// --- Animation (declarative spec consolidates bundle + state map) ---
 	public static final int STATE_OFF = 0;
 	public static final int STATE_ON  = 1;
 
-	public static final Aero_AnimationBundle   BUNDLE   = Aero_AnimationLoader.load("/models/MegaCrusher.anim.json");
-	public static final Aero_AnimationDefinition ANIM_DEF = new Aero_AnimationDefinition()
-		.state(STATE_OFF, "idle")
-		.state(STATE_ON,  "working");
+	public static final Aero_AnimationSpec ANIMATION =
+		Aero_AnimationSpec.builder("/models/MegaCrusher.anim.json")
+			.state(STATE_OFF, "idle")
+			.state(STATE_ON,  "working")
+			.build();
 
-	public final Aero_AnimationState animState = ANIM_DEF.createState(BUNDLE);
+	public final Aero_AnimationState animState = ANIMATION.createState();
+	private boolean eventListenerWired = false;
+	private final float[] locatorScratch = new float[3];
 
 	{
 		for (int s = 0; s < 6; s++) {
@@ -109,10 +113,14 @@ public class Retronism_TileMegaCrusher extends TileEntity implements IInventory,
 	}
 
 	public void updateEntity() {
+		if (!eventListenerWired) {
+			wireAnimationEvents();
+			eventListenerWired = true;
+		}
 		animState.tick();
 		boolean running = storedEnergy >= ENERGY_PER_TICK
 			&& (cookTime[0] > 0 || cookTime[1] > 0 || cookTime[2] > 0);
-		animState.setState(running ? STATE_ON : STATE_OFF);
+		ANIMATION.applyState(animState, running ? STATE_ON : STATE_OFF);
 
 		if (worldObj.multiplayerWorld) return;
 
@@ -172,6 +180,52 @@ public class Retronism_TileMegaCrusher extends TileEntity implements IInventory,
 			--inventory[inputSlot].stackSize;
 		}
 		if (inventory[inputSlot].stackSize <= 0) inventory[inputSlot] = null;
+	}
+
+	/**
+	 * Wires sound + particle dispatch via Aero_AnimationEventRouter.
+	 * Locators ("shredder_L", "shredder_R", "turbine_l", "turbine_r") are
+	 * resolved to world coords through {@code animState.getAnimatedPivot}
+	 * so the FX anchor on the moving mesh, not on the tile origin.
+	 */
+	private void wireAnimationEvents() {
+		// Sounds: server-side only — playSoundEffect packet broadcasts to every
+		// client, so doing it on the client too would double-play in SMP.
+		// Particles: fire unconditionally — World#spawnParticle is a no-op on
+		// the dedicated SMP server (no RenderEngine), and on SP/SMP-client it
+		// just renders locally.
+		Aero_AnimationEventListener soundHandler = new Aero_AnimationEventListener() {
+			public void onEvent(String channel, String name, String locator, float time) {
+				if (!Aero_AnimationSide.isServerSide(worldObj)) return;
+				double[] pos = locatorWorldPos(locator);
+				worldObj.playSoundEffect(pos[0], pos[1], pos[2], name, 0.4f, 1.0f);
+			}
+		};
+		Aero_AnimationEventListener particleHandler = new Aero_AnimationEventListener() {
+			public void onEvent(String channel, String name, String locator, float time) {
+				if (worldObj == null) return;
+				double[] pos = locatorWorldPos(locator);
+				worldObj.spawnParticle(name, pos[0], pos[1], pos[2], 0.0d, 0.05d, 0.0d);
+			}
+		};
+		animState.setEventListener(Aero_AnimationEventRouter.builder()
+			.onChannel("sound", soundHandler)
+			.onChannel("particle", particleHandler)
+			.build());
+	}
+
+	private double[] locatorWorldPos(String locator) {
+		double[] out = new double[3];
+		if (locator != null && animState.getAnimatedPivot(locator, 0f, locatorScratch)) {
+			out[0] = originX + locatorScratch[0];
+			out[1] = originY + locatorScratch[1];
+			out[2] = originZ + locatorScratch[2];
+		} else {
+			out[0] = xCoord + 0.5d;
+			out[1] = yCoord + 0.5d;
+			out[2] = zCoord + 0.5d;
+		}
+		return out;
 	}
 
 	public boolean validateStructure() {
