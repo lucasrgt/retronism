@@ -32,4 +32,14 @@ public final class AeroTest_Light {
 		if (bright <= 0f) bright = world.getLightBrightness(x, y + 1, z);
 		return bright;
 	}
+
+	/**
+	 * Entity-position brightness sample — does NOT walk to the column top.
+	 * Use for mobs that move through water / ice / glass: column-top
+	 * sampling would give full sky brightness and make submerged entities
+	 * glow.
+	 */
+	public static float brightnessAt(World world, int x, int y, int z) {
+		return world.getLightBrightness(x, y, z);
+	}
 }

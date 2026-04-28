@@ -59,7 +59,10 @@ public class AeroTest_RobotEntityRenderer extends Render {
 		int ex = (int) Math.floor(entity.posX);
 		int ey = (int) Math.floor(entity.posY);
 		int ez = (int) Math.floor(entity.posZ);
-		float brightness = AeroTest_Light.brightnessAbove(entity.worldObj, ex, ey, ez);
+		// brightnessAt (entity-relative), not brightnessAbove (column top) —
+		// the latter walks to the world's surface, which makes submerged
+		// robots glow because they pick up sky brightness through water/ice.
+		float brightness = AeroTest_Light.brightnessAt(entity.worldObj, ex, ey, ez);
 		Aero_EntityModelRenderer.render(MODEL, bot.animState,
 			x, y, z, yaw, brightness, partialTick, tint);
 	}
