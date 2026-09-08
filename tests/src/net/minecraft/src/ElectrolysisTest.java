@@ -1,5 +1,8 @@
 package net.minecraft.src;
 
+import aero.machineapi.Aero_FluidType;
+import aero.machineapi.Aero_GasType;
+
 import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;

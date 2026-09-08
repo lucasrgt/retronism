@@ -1,0 +1,64 @@
+# Retronism refinery delivery proof
+
+Validated on 2026-09-08 with Minecraft Beta 1.7.3, the real Forge 1.0.6 client,
+Java 8 and Worldline's qualified `ForgeTestRuntimeProvider`. Library and Worldline
+revisions are pinned in `dependencies.properties`.
+
+- Delivery run: `build/proofs/ec57cc372b4d407b9034d33fd9732f81`.
+- Command: `./tools/prove.ps1 -Obfuscated`.
+- Existing JUnit suite: **170 tests passed**.
+- Common refinery side audit: **zero violations** (`B173-SIDE-001`).
+- Worldline external contract: **1 passed, 0 failures**, 66.746 seconds.
+- In-game fixture: **1149 actual controlled ticks**, four complete network orientations.
+- Product: `dist/retronism-0.2.0-b1.7.3.jar`, 250 owned/dependency classes.
+- Product SHA-256: `c5955d25a2592775ffc36fa71377f07eca0dd122bddd5bb570a8944a61fb29c4`.
+- Export checked every delivered JAR entry against the bundle installed in the
+  passing game process: **all bytes equal**. No Minecraft or fixture classes ship.
+
+## Qualified behavior
+
+The original invalid/valid formation cases, required air, all 45 formed cells,
+connector landmark raycasts, open-space collision, exact recipe consumption,
+blocked machine output, mid-recipe save/reload and one-time teardown drops pass.
+Formation now also exercises the production Retronism wrench.
+
+For each of the four orientations, the fixture builds a real coal generator,
+two directed energy cables, six item pipes and three vanilla chests. Production
+tile ticks perform every transfer. The test checks:
+
+1. Physical connector rendering and side contracts agree with each rotated port.
+2. A wrong item remains in the inlet pipe. The existing whitelist prevents that
+   rejected item from being drawn again from the mixed source chest.
+3. An unpowered network does not process. Coal subsequently powers the actual
+   generator, which sends RN through both cables to the refinery.
+4. Seed, sugar and product counts are conserved across chests, pipe buffers and
+   master inventory. Generated RN equals buffered RN plus recipe consumption
+   while the network is intact.
+5. The active network is saved, closed and reopened during a recipe. Inventory,
+   energy, progress, filters, directions and port behavior survive the disk reload.
+6. A full destination chest retains all four products upstream. Clearing it allows
+   all four products to travel through both output pipes into the chest.
+7. Removing the last power cable stops new supply. One additional recipe consumes
+   exactly 160 RN of the machine's existing buffer; replacing the cable restores
+   charging. Each orientation finishes with five pellets in the output chest.
+
+The final saved workshop is a fresh north-facing assembly with stocked chests and
+coal. It produces into the destination chest before export. The front and rear
+PNGs are untouched screenshots from its actual GL context. AeroModelLib rendered
+5676 triangles using 16 cached display lists, with exact 5 x 3 x 3 mesh bounds.
+
+## Scope
+
+This qualifies the refinery with Retronism's regular RN cables and item pipes in
+singleplayer. The Mega Pipe insertion path uses the same guarded refinery transfer
+adapter and its existing unit tests pass, but no complete Mega Pipe runtime line
+is claimed. Fluid/gas recipes, other mods' transports, dedicated servers and
+StationAPI are not covered. A tilted cuboid has an enclosing-AABB collision
+approximation. Breaking a cable discards that cable's stored RN; intact-network
+energy accounting is checked before this intentional removal.
+
+`runtime.properties`, `worldline-junit.xml`, `world/forge-f01/client.log`, the
+profiler capture and screenshots reside in the delivery run. `dist/proof-receipt.json`
+records the exported world's hash and its match to the tested product. Failed
+diagnostic runs remain separately identified in `build/proofs` and are not delivery
+evidence.

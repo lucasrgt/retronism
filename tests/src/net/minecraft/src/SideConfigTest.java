@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import aero.machineapi.Aero_SideConfig;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -349,6 +349,7 @@ public class Retronism_TileMegaPipe extends TileEntity
 	}
 
 	private ItemStack insertIntoInventory(IInventory inv, ItemStack stack, int[] slots) {
+        if (inv instanceof refinery.RefineryTile) return refinery.NetworkPorts.insert((refinery.RefineryTile) inv, stack);
 		if (slots != null) {
 			for (int i : slots) {
 				ItemStack existing = inv.getStackInSlot(i);

@@ -3,12 +3,12 @@ package retronism.render;
 import net.minecraft.src.*;
 import net.minecraft.client.Minecraft;
 import retronism.tile.Retronism_TileMegaCrusher;
-import aero.modellib.Aero_BoneRenderPose;
-import aero.modellib.Aero_MeshModel;
+import aero.modellib.skeletal.Aero_BoneRenderPose;
+import aero.modellib.model.Aero_MeshModel;
 import aero.modellib.Aero_MeshRenderer;
-import aero.modellib.Aero_ObjLoader;
-import aero.modellib.Aero_ProceduralPose;
-import aero.modellib.Aero_RenderOptions;
+import aero.modellib.model.Aero_ObjLoader;
+import aero.modellib.skeletal.Aero_ProceduralPose;
+import aero.modellib.render.Aero_RenderOptions;
 
 public class Retronism_TileEntityRenderMegaCrusher extends TileEntitySpecialRenderer {
 

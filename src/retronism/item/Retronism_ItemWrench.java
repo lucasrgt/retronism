@@ -14,7 +14,6 @@ public class Retronism_ItemWrench extends Item {
 	}
 
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side) {
-		// Pipes and MegaPipe handle wrench via blockActivated — return false to let it through
-		return false;
+		return refinery.Wrench.use(player, world, x, y, z, side);
 	}
 }

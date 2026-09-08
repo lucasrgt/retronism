@@ -1,4 +1,11 @@
 package net.minecraft.src;
+import aero.modellib.Aero_AnimationState;
+
+import aero.modellib.animation.Aero_AnimationBundle;
+import aero.modellib.animation.Aero_AnimationClip;
+import aero.modellib.animation.Aero_AnimationDefinition;
+import aero.modellib.animation.Aero_AnimationLoop;
+import aero.modellib.animation.Aero_Easing;
 
 import org.junit.Test;
 import org.junit.Before;

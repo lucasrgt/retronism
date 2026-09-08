@@ -8,3 +8,8 @@ temp_build/
 # Test artifacts (jars, compiled output, tmp)
 tests/data/
 tests/out/
+
+build/
+dist/
+.local/
+/*.log

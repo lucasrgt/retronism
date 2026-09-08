@@ -1,0 +1,43 @@
+{
+  "sourceSha256": "406e02a18ab4df3ee4bf5312e17f93c945ef1b5285c5b919b63fe37d3638d36f",
+  "cubes": 473,
+  "faces": 2838,
+  "scale": "16 native pixels = 1 Minecraft block",
+  "boundsBlocks": [
+    5,
+    3,
+    3
+  ],
+  "renderer": "AeroModelLib Aero_MeshRenderer.renderModelAtRest",
+  "masterLocal": [
+    2,
+    1,
+    2
+  ],
+  "textures": [
+    {
+      "name": "refinery_custom_48",
+      "width": 48,
+      "height": 48,
+      "sha256": "49de577cb775dae168519fc26d2c090213512cde0ac5f499b9a2957fe567e142"
+    },
+    {
+      "name": "IE refinery original",
+      "width": 48,
+      "height": 48,
+      "sha256": "e1b9c5dbf3e0add77b22837dedbd1b39d1dccdeb6c590baeb7256cff070bca27"
+    },
+    {
+      "name": "IE iron trim original",
+      "width": 16,
+      "height": 16,
+      "sha256": "e6764ad06bd2c406d950af1d75cd5ef8c6ef7b3eebc31b4ca5bdd0cf0600ce7c"
+    },
+    {
+      "name": "IE copper original",
+      "width": 16,
+      "height": 16,
+      "sha256": "4237bf868a5182ef4cce3de937ec1d99c0a4ec9ec0aabced0650b6f6fcd03c97"
+    }
+  ]
+}

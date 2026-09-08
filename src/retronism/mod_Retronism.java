@@ -3,7 +3,7 @@ package retronism;
 import net.minecraft.src.*;
 import retronism.render.*;
 import retronism.tile.*;
-import aero.particlelib.*;
+
 import net.minecraft.client.Minecraft;
 import java.util.HashMap;
 
@@ -49,6 +49,7 @@ public class mod_Retronism extends BaseMod {
 
 		// Register blocks, tiles, names
 		Retronism_Registry.registerAll(this);
+        Retronism_Refinery.register();
 
 		// Register recipes
 		Retronism_Recipes.registerAll();
@@ -78,34 +79,9 @@ public class mod_Retronism extends BaseMod {
 		ModLoader.addAnimation(new Retronism_TextureGasOverlayFX(GAS_OVERLAY_INDEX));
 	}
 
-	private boolean particlesInitialized = false;
-
-	public boolean OnTickInGame(float partialTick, Minecraft mc) {
-		// Initialize particle textures on first tick (GL context must be ready)
-		if (!particlesInitialized) {
-			Aero_ParticleTextures.init();
-			Aero_ParticleSync.registerBuiltins();
-			particlesInitialized = true;
-		}
-		Aero_ParticleManager.tick();
-		return true;
-	}
-
-	public boolean OnTickInGUI(float partialTick, Minecraft mc, GuiScreen gui) {
-		// Keep ticking particles even in GUIs
-		if (particlesInitialized) {
-			Aero_ParticleManager.tick();
-		}
-		return true;
-	}
-
-	public void OnRenderWorldLast(RenderGlobal renderer, float partialTick) {
-		if (particlesInitialized) {
-			Aero_ParticleManager.render(partialTick);
-		}
-	}
+	public int AddFuel(int id) { return id == Retronism_Refinery.FUEL.shiftedIndex ? 1600 : 0; }
 
 	public String Version() {
-		return "0.1.0";
+		return "0.2.0";
 	}
 }

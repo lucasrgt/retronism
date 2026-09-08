@@ -250,6 +250,7 @@ public class Retronism_TileItemPipe extends TileEntity implements IInventory, Ae
 	}
 
 	private ItemStack addToInventory(IInventory inv, ItemStack stack, int[] slots) {
+        if (inv instanceof refinery.RefineryTile) return refinery.NetworkPorts.insert((refinery.RefineryTile) inv, stack);
 		if (slots != null) {
 			for (int i : slots) {
 				ItemStack existing = inv.getStackInSlot(i);

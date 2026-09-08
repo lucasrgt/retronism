@@ -4,10 +4,10 @@ import net.minecraft.src.*;
 import retronism.*;
 import aero.machineapi.*;
 import retronism.recipe.*;
-import aero.modellib.Aero_AnimationEventListener;
-import aero.modellib.Aero_AnimationEventRouter;
+import aero.modellib.animation.Aero_AnimationEventListener;
+import aero.modellib.animation.Aero_AnimationEventRouter;
 import aero.modellib.Aero_AnimationSide;
-import aero.modellib.Aero_AnimationSpec;
+import aero.modellib.animation.Aero_AnimationSpec;
 import aero.modellib.Aero_AnimationState;
 
 import java.util.Random;
