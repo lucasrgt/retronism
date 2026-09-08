@@ -1,0 +1,4 @@
+# Asset receipts hash exact bytes, including native JSON and OBJ line endings.
+/assets/refinery.bbmodel -text
+/src/main/resources/refinery/* -text
+/CREDITS.md -text
