@@ -99,8 +99,10 @@ using a native hotbar-key event, verifies the real client's crosshair, and sends
 right-button press/release messages to the game's own native window. LWJGL and
 Minecraft dispatch the click normally; this test never calls the wrench's use
 method or the formation method directly. It also rejects the wrong held item and
-an incorrect construction block. Before/after images are saved for all four
-orientations. Raw-block placement and player positioning are fixture setup; this
+an incorrect construction block. The valid case runs first on a fresh assembly:
+exactly one button press/release must form the machine, and the button must be
+released. Negative cases run only after a separate raw rebuild. Before/after images
+are saved for all four orientations. Raw-block placement and player positioning are fixture setup; this
 does not simulate a player placing each construction block from inventory.
 Run `python tools/export_demo.py` after a delivery pass to export the workshop
 and the eight `dist/formation-facing-<n>-before/after.png` images.

@@ -11,6 +11,7 @@ public final class RefineryWindowInput {
     private final long hwnd;
     private final Method send;
     private final File log;
+    private int rightClicks;
     public RefineryWindowInput(File root) throws Exception {
         log=new File(root,"window-input.log");
         Class<?> windows=Class.forName("org.lwjgl.opengl.WindowsDisplay");
@@ -47,8 +48,10 @@ public final class RefineryWindowInput {
         long position=((long)(client.displayHeight/2)<<16)|(client.displayWidth/2);
         message(0x204,2,position); // WM_RBUTTONDOWN -> WindowsMouse -> Mouse.next -> clickMouse(1).
         message(0x205,0,position); // WM_RBUTTONUP; never leave a held button behind.
+        rightClicks++;
         record("facing="+facing+" tick="+tick+" button=right down+up expected="+expected);
     }
+    public int rightClicks() { return rightClicks; }
     private void message(long id,long wparam,long lparam) throws Exception { send.invoke(null,hwnd,id,wparam,lparam); }
     private void record(String line) throws IOException {
         try(PrintWriter output=new PrintWriter(new FileWriter(log,true))) { output.println(line); }

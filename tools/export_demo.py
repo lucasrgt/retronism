@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+import re
 import shutil
 import zipfile
 
@@ -41,11 +42,17 @@ for facing in range(4):
 properties = dict(line.split('=', 1) for line in evidence.splitlines() if '=' in line)
 native_ticks = int(properties['nativeFormationTicks'])
 input_log = (run / 'window-input.log').read_text()
+first_clicks = re.findall(r'RETRONISM_FIRST_CLICK_PASS facing=(\d) clicks=1 held=false sentTick=(\d+) formedTick=(\d+)',
+                         (run / 'world/forge-f01/client.log').read_text(errors='replace'))
+if len(first_clicks) != 4 or {int(value[0]) for value in first_clicks} != set(range(4)):
+    raise RuntimeError('Each orientation must prove formation on its first single click')
 summary = {'run': run.name, 'releaseSha256': receipt['sha256'], 'orientations': 4,
            'runtimeTicks': int(properties['ticks']) + native_ticks,
            'nativeFormationTicks': native_ticks, 'nativeWindowInput': True,
            'nativeRightClicks': input_log.count('button=right down+up'),
            'nativeHotbarSelections': input_log.count('key=2 down+up'),
+           'firstClickFormation': [{'facing': int(facing), 'clicks': 1, 'held': False,
+                                    'latencyTicks': int(formed)-int(sent)} for facing, sent, formed in first_clicks],
            'testedProductEntriesEqualRelease': True,
            'worldSha256': hashlib.sha256(world.read_bytes()).hexdigest()}
 (root / 'dist/proof-receipt.json').write_text(json.dumps(summary, indent=2) + '\n')

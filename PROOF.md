@@ -4,11 +4,11 @@ Validated on 2026-09-08 with Minecraft Beta 1.7.3, the real Forge 1.0.6 client,
 Java 8 and Worldline's qualified `ForgeTestRuntimeProvider`. Library and Worldline
 revisions are pinned in `dependencies.properties`.
 
-- Delivery run: `build/proofs/dcc25e2822e74076a8391ed7b149c385`.
+- Delivery run: `build/proofs/99da10b85ecc4f4f8792d7effd88f6b3`.
 - Command: `./tools/prove.ps1 -Obfuscated`.
 - Existing JUnit suite: **170 tests passed**.
 - Common refinery side audit: **zero violations** (`B173-SIDE-001`).
-- Worldline external contract: **1 passed, 0 failures**, 73.712 seconds.
+- Worldline external contract: **1 passed, 0 failures**, 74.954 seconds.
 - In-game fixture: **1265 ticks** across native formation and machine/network scenarios, four orientations.
 - Product: `dist/retronism-0.2.0-b1.7.3.jar`, 250 owned/dependency classes.
 - Product SHA-256: `c5955d25a2592775ffc36fa71377f07eca0dd122bddd5bb570a8944a61fb29c4`.
@@ -20,23 +20,24 @@ revisions are pinned in `dependencies.properties`.
 `RefineryClickProof` places the raw construction fixture, positions the actual
 player and leaves the first hotbar slot selected with coal. For each orientation:
 
-1. Native right-click with coal leaves all raw blocks unchanged.
-2. A Windows key-2 press/release travels through LWJGL and Minecraft's keyboard
+1. A Windows key-2 press/release travels through LWJGL and Minecraft's keyboard
    loop; the test observes that the held item becomes the Retronism wrench.
-3. Native right-click with one wrong construction block leaves the whole structure
-   unchanged, with no partial formation.
-4. After restoring the component, the test reads the actual client's crosshair
-   target and face, captures the raw assembly, and sends native right-button
-   down/up messages to this game window. The normal Minecraft input loop dispatches
-   the interaction and all 45 cells become the linked refinery. A second screenshot
-   captures the resulting model from the same camera.
+2. With a fresh complete assembly and **no prior mouse click**, the test reads the
+   actual crosshair target and captures the raw blocks. It sends exactly one
+   right-button press/release. All 45 cells become the linked refinery.
+3. A click counter must still equal one, the right button must be released, and
+   the fixture records the first tick at which formation is observed. All four
+   orientations formed on the next tick: 8 -> 9, 37 -> 38, 66 -> 67, 95 -> 96.
+4. Only after the valid case, a separate raw rebuild tests that clicking with coal
+   does nothing and that the wrench rejects a wrong construction block atomically.
+   Those negative clicks cannot prime the earlier successful formation.
 
 This formation test makes **no direct call** to `Structure.form`, `onItemUse`,
 `PlayerController.sendPlaceBlock` or `Minecraft.clickMouse`. Its test-only Windows
 adapter invokes the pinned LWJGL native `WindowsDisplay.sendMessage(JJJJ)J` function
 against that client's own HWND. The route is Windows window procedure -> LWJGL
 mouse queue -> Minecraft input loop -> player controller -> held wrench.
-`window-input.log` records **12 right-click pulses** and **4 hotbar selections**.
+`window-input.log` records **12 right-click pulses** and **8 hotbar selections**.
 The LWJGL JAR SHA-256 is
 `833e721817f70d1445eec13d8ce5a86e12af70efac5014356302e2bbc68b3fe2`.
 
@@ -46,6 +47,11 @@ position are fixture setup; individual player-driven placement of the 34 compone
 is outside this proof. This qualifies synthetic native window input on Windows,
 not a physical mouse device or another operating system. The later machine/network
 fixtures retain their direct setup helpers and are separate from this input proof.
+
+The opt-in fixture also dismisses Beta's automatic `GuiIngameMenu` on focus loss
+and restores its own window focus without sending a mouse click. It logs every
+such recovery. A two-orientation diagnostic run reproduced this pause at tick 515
+and completed after recovery; earlier interrupted runs remain separate evidence.
 
 Before/after images live under `formation/facing-<n>/before|after/screenshots` in
 the run and export to `dist/formation-facing-<n>-before|after.png`.

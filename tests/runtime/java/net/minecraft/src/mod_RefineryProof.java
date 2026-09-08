@@ -18,9 +18,22 @@ public final class mod_RefineryProof extends BaseMod {
     public mod_RefineryProof() {
         String path = System.getenv("REFINERY_PROOF_ROOT");
         root = path == null ? null : new File(path);
-        if(root != null) ModLoader.SetInGameHook(this,true,true);
+        if(root != null) {
+            ModLoader.SetInGameHook(this,true,true);
+            ModLoader.SetInGUIHook(this,true,false);
+        }
     }
     @Override public String Version() { return "refinery-proof-v1"; }
+    @Override public boolean OnTickInGUI(Minecraft client, GuiScreen screen) {
+        if(done || root==null) return false;
+        if(screen instanceof GuiIngameMenu && client.theWorld!=null) {
+            // Beta pauses on window focus loss; restore this test client's focus without a click.
+            System.out.println("REFINERY_PROOF_RESUME_PAUSE ticks="+ticks+" nativeComplete="+clickComplete);
+            try { new RefineryWindowInput(root).focus(client); }
+            catch(Exception error) { record("FAILED",error.toString()); done=true; }
+        }
+        return !done;
+    }
     @Override public boolean OnTickInGame(Minecraft client) {
         if(done || root==null || client.theWorld==null) return !done;
         try {
