@@ -10,6 +10,8 @@ run = Path((root / 'build/latest-proof.txt').read_text())
 evidence = (run / 'runtime.properties').read_text()
 if 'status=PASS' not in evidence or 'network-orientations\\=4' not in evidence:
     raise RuntimeError('A passing four-orientation delivery run is required')
+if 'nativeFormation=true' not in evidence:
+    raise RuntimeError('The native mouse formation proof is required')
 receipt = json.loads((root / 'dist/package-receipt.json').read_text())
 release = root / 'dist' / receipt['release']
 if hashlib.sha256(release.read_bytes()).hexdigest() != receipt['sha256']:
@@ -30,8 +32,20 @@ if len(images) != 4:
     raise RuntimeError('Expected the two machine proofs and two workshop views')
 for image, name in zip(images[-2:], ('retronism-refinery-front.png', 'retronism-refinery-rear.png')):
     shutil.copyfile(image, root / 'dist' / name)
+for facing in range(4):
+    for stage in ('before', 'after'):
+        shots = list((run / f'formation/facing-{facing}/{stage}/screenshots').glob('*.png'))
+        if len(shots) != 1:
+            raise RuntimeError(f'Expected one native formation screenshot: facing {facing}, {stage}')
+        shutil.copyfile(shots[0], root / 'dist' / f'formation-facing-{facing}-{stage}.png')
+properties = dict(line.split('=', 1) for line in evidence.splitlines() if '=' in line)
+native_ticks = int(properties['nativeFormationTicks'])
+input_log = (run / 'window-input.log').read_text()
 summary = {'run': run.name, 'releaseSha256': receipt['sha256'], 'orientations': 4,
-           'runtimeTicks': int(next(line.split('=', 1)[1] for line in evidence.splitlines() if line.startswith('ticks='))),
+           'runtimeTicks': int(properties['ticks']) + native_ticks,
+           'nativeFormationTicks': native_ticks, 'nativeWindowInput': True,
+           'nativeRightClicks': input_log.count('button=right down+up'),
+           'nativeHotbarSelections': input_log.count('key=2 down+up'),
            'testedProductEntriesEqualRelease': True,
            'worldSha256': hashlib.sha256(world.read_bytes()).hexdigest()}
 (root / 'dist/proof-receipt.json').write_text(json.dumps(summary, indent=2) + '\n')

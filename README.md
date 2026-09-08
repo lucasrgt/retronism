@@ -94,6 +94,17 @@ diagnostic run; delivery uses all four orientations. Evidence is written to a fr
 `build/proofs/<run>` directory and `build/latest-proof.txt` identifies the last pass.
 See `PROOF.md` for the delivered run and qualified claims.
 
+The Windows input proof starts with raw construction blocks. It selects the wrench
+using a native hotbar-key event, verifies the real client's crosshair, and sends
+right-button press/release messages to the game's own native window. LWJGL and
+Minecraft dispatch the click normally; this test never calls the wrench's use
+method or the formation method directly. It also rejects the wrong held item and
+an incorrect construction block. Before/after images are saved for all four
+orientations. Raw-block placement and player positioning are fixture setup; this
+does not simulate a player placing each construction block from inventory.
+Run `python tools/export_demo.py` after a delivery pass to export the workshop
+and the eight `dist/formation-facing-<n>-before/after.png` images.
+
 The legacy shell tools remain for the original monorepo/MCP setup. The new PowerShell
 build retains Retronism's flat game-package generation and uses AeroModelLib 3's
 package layout directly. The optional Aero showcase companion and VFX demo are kept

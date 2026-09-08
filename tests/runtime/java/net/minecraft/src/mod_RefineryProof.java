@@ -12,6 +12,8 @@ public final class mod_RefineryProof extends BaseMod {
     private RefineryTile master;
     private boolean done;
     private RetronismNetworkProof network;
+    private RefineryClickProof clickProof;
+    private boolean clickComplete;
     private final File root;
     public mod_RefineryProof() {
         String path = System.getenv("REFINERY_PROOF_ROOT");
@@ -21,7 +23,14 @@ public final class mod_RefineryProof extends BaseMod {
     @Override public String Version() { return "refinery-proof-v1"; }
     @Override public boolean OnTickInGame(Minecraft client) {
         if(done || root==null || client.theWorld==null) return !done;
-        try { step(client); }
+        try {
+            if(!clickComplete) {
+                if(clickProof==null) clickProof=new RefineryClickProof(client,root);
+                clickComplete=clickProof.tick(client);
+                if(!clickComplete) return true;
+            }
+            step(client);
+        }
         catch(Throwable error) {
             error.printStackTrace();
             record("FAILED", error.toString()); done=true;
@@ -129,6 +138,8 @@ public final class mod_RefineryProof extends BaseMod {
         try {
             root.mkdirs(); Properties values=new Properties();
             values.setProperty("status",status); values.setProperty("detail",detail); values.setProperty("ticks",Integer.toString(ticks));
+            values.setProperty("nativeFormation",Boolean.toString(clickComplete));
+            values.setProperty("nativeFormationTicks",Integer.toString(clickProof==null?0:clickProof.ticks()));
             FileOutputStream output=new FileOutputStream(new File(root,"runtime.properties")); values.store(output,"Actual Beta 1.7.3 runtime evidence"); output.close();
         } catch(IOException error) { throw new IllegalStateException(error); }
     }

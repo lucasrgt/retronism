@@ -4,16 +4,51 @@ Validated on 2026-09-08 with Minecraft Beta 1.7.3, the real Forge 1.0.6 client,
 Java 8 and Worldline's qualified `ForgeTestRuntimeProvider`. Library and Worldline
 revisions are pinned in `dependencies.properties`.
 
-- Delivery run: `build/proofs/ec57cc372b4d407b9034d33fd9732f81`.
+- Delivery run: `build/proofs/dcc25e2822e74076a8391ed7b149c385`.
 - Command: `./tools/prove.ps1 -Obfuscated`.
 - Existing JUnit suite: **170 tests passed**.
 - Common refinery side audit: **zero violations** (`B173-SIDE-001`).
-- Worldline external contract: **1 passed, 0 failures**, 66.746 seconds.
-- In-game fixture: **1149 actual controlled ticks**, four complete network orientations.
+- Worldline external contract: **1 passed, 0 failures**, 73.712 seconds.
+- In-game fixture: **1265 ticks** across native formation and machine/network scenarios, four orientations.
 - Product: `dist/retronism-0.2.0-b1.7.3.jar`, 250 owned/dependency classes.
 - Product SHA-256: `c5955d25a2592775ffc36fa71377f07eca0dd122bddd5bb570a8944a61fb29c4`.
 - Export checked every delivered JAR entry against the bundle installed in the
   passing game process: **all bytes equal**. No Minecraft or fixture classes ship.
+
+## Native click formation
+
+`RefineryClickProof` places the raw construction fixture, positions the actual
+player and leaves the first hotbar slot selected with coal. For each orientation:
+
+1. Native right-click with coal leaves all raw blocks unchanged.
+2. A Windows key-2 press/release travels through LWJGL and Minecraft's keyboard
+   loop; the test observes that the held item becomes the Retronism wrench.
+3. Native right-click with one wrong construction block leaves the whole structure
+   unchanged, with no partial formation.
+4. After restoring the component, the test reads the actual client's crosshair
+   target and face, captures the raw assembly, and sends native right-button
+   down/up messages to this game window. The normal Minecraft input loop dispatches
+   the interaction and all 45 cells become the linked refinery. A second screenshot
+   captures the resulting model from the same camera.
+
+This formation test makes **no direct call** to `Structure.form`, `onItemUse`,
+`PlayerController.sendPlaceBlock` or `Minecraft.clickMouse`. Its test-only Windows
+adapter invokes the pinned LWJGL native `WindowsDisplay.sendMessage(JJJJ)J` function
+against that client's own HWND. The route is Windows window procedure -> LWJGL
+mouse queue -> Minecraft input loop -> player controller -> held wrench.
+`window-input.log` records **12 right-click pulses** and **4 hotbar selections**.
+The LWJGL JAR SHA-256 is
+`833e721817f70d1445eec13d8ce5a86e12af70efac5014356302e2bbc68b3fe2`.
+
+The native-input scenario takes 116 ticks and runs before the existing 1149-tick
+machine/network scenario. Raw-block placement, inventory provisioning and player
+position are fixture setup; individual player-driven placement of the 34 components
+is outside this proof. This qualifies synthetic native window input on Windows,
+not a physical mouse device or another operating system. The later machine/network
+fixtures retain their direct setup helpers and are separate from this input proof.
+
+Before/after images live under `formation/facing-<n>/before|after/screenshots` in
+the run and export to `dist/formation-facing-<n>-before|after.png`.
 
 ## Qualified behavior
 

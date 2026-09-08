@@ -49,7 +49,7 @@ for name in ['net/minecraft/client/Minecraft.class', 'px.class', 'n.class', 'dk.
     base[name] = (reobf / name).read_bytes()
 archive(obf / 'minecraft.jar', base)
 fixture = dict(product)
-for name in ['mod_RefineryProof.class', 'RefineryFixture.class', 'RefineryRenderProof.class', 'RetronismNetworkProof.class', 'RetronismNetworkScene.class', 'mod_WorldlineTestKitProbe.class']:
+for name in ['mod_RefineryProof.class', 'RefineryFixture.class', 'RefineryRenderProof.class', 'RefineryWindowInput.class', 'RefineryClickProof.class', 'RetronismNetworkProof.class', 'RetronismNetworkScene.class', 'mod_WorldlineTestKitProbe.class']:
     fixture[name] = (reobf / name).read_bytes()
 for source in (reobf / 'worldline').rglob('*.class'):
     fixture[source.relative_to(reobf).as_posix()] = source.read_bytes()
