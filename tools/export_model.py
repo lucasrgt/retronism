@@ -82,7 +82,7 @@ for index, faces in enumerate(groups):
             lines.append(f'vt {u:.9g} {1-v:.9g}')
         lines.append('f ' + ' '.join(f'{v}/{v}' for v in range(vertex, vertex+4)))
         vertex += 4
-    (out / f'model-{index}.obj').write_text('\n'.join(lines)+'\n', encoding='utf-8')
+    (out / f'model-{index}.obj').write_text('\n'.join(lines)+'\n', encoding='utf-8', newline='\n')
 for i, texture in enumerate(textures):
     (out / f'texture-{i}.png').write_bytes(base64.b64decode(texture['source'].split(',', 1)[1]))
 with (out / 'collision.bin').open('wb') as output:
@@ -100,5 +100,5 @@ receipt = {
                   'sha256': hashlib.sha256((out / f'texture-{i}.png').read_bytes()).hexdigest()}
                  for i, t in enumerate(textures)]
 }
-(out / 'model-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+(out / 'model-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8', newline='\n')
 print(json.dumps(receipt, indent=2))

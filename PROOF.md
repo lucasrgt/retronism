@@ -4,15 +4,15 @@ Validated on 2026-09-08 with Minecraft Beta 1.7.3, the real Forge 1.0.6 client,
 Java 8 and Worldline's qualified `ForgeTestRuntimeProvider`. Library and Worldline
 revisions are pinned in `dependencies.properties`.
 
-- Delivery run: `build/proofs/7a9897f1dbc94ebaa5bf3346dc92e39b`.
+- Delivery run: `build/proofs/a2e72fe4f7e44d7090f96d6c589215d1`.
 - Command: `./tools/prove.ps1 -Obfuscated`.
 - Existing JUnit suite: **170 tests passed**.
 - Connector asset checks: **4 tests passed** (centers, open mouths, runtime semantics and mesh/source correspondence).
 - Common refinery side audit: **zero violations** (`B173-SIDE-001`).
-- Worldline external contract: **1 passed, 0 failures**, 76.346 seconds.
+- Worldline external contract: **1 passed, 0 failures**, 74.509 seconds.
 - In-game fixture: **1265 ticks** across native formation and machine/network scenarios, four orientations.
 - Product: `dist/retronism-0.2.0-b1.7.3.jar`, 250 owned/dependency classes.
-- Product SHA-256: `0ded0fc7f51b49f6d4e80cd59d071661af7d248341f776eb5fdfd1a6cf34a884`.
+- Product SHA-256: `2b32da2a99ccc1530c4079a5edc5a814d274525dabf84d122b563cc121eba61c`.
 - Export checked every delivered JAR entry against the bundle installed in the
   passing game process: **all bytes equal**. No Minecraft or fixture classes ship.
 

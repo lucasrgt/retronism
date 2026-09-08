@@ -48,6 +48,8 @@ class RefineryPorts(unittest.TestCase):
         self.assertEqual(len(ELEMENTS), 483)
         faces = sum((ROOT / f'src/main/resources/refinery/model-{i}.obj').read_text().count('\nf ') for i in range(4))
         self.assertEqual(faces, len(ELEMENTS) * 6)
+        for name in ['model-receipt.json'] + [f'model-{i}.obj' for i in range(4)]:
+            self.assertNotIn(b'\r\n', (ROOT / 'src/main/resources/refinery' / name).read_bytes())
 
 if __name__ == '__main__':
     unittest.main()
