@@ -4,14 +4,15 @@ Validated on 2026-09-08 with Minecraft Beta 1.7.3, the real Forge 1.0.6 client,
 Java 8 and Worldline's qualified `ForgeTestRuntimeProvider`. Library and Worldline
 revisions are pinned in `dependencies.properties`.
 
-- Delivery run: `build/proofs/99da10b85ecc4f4f8792d7effd88f6b3`.
+- Delivery run: `build/proofs/7a9897f1dbc94ebaa5bf3346dc92e39b`.
 - Command: `./tools/prove.ps1 -Obfuscated`.
 - Existing JUnit suite: **170 tests passed**.
+- Connector asset checks: **4 tests passed** (centers, open mouths, runtime semantics and mesh/source correspondence).
 - Common refinery side audit: **zero violations** (`B173-SIDE-001`).
-- Worldline external contract: **1 passed, 0 failures**, 74.954 seconds.
+- Worldline external contract: **1 passed, 0 failures**, 76.346 seconds.
 - In-game fixture: **1265 ticks** across native formation and machine/network scenarios, four orientations.
 - Product: `dist/retronism-0.2.0-b1.7.3.jar`, 250 owned/dependency classes.
-- Product SHA-256: `c5955d25a2592775ffc36fa71377f07eca0dd122bddd5bb570a8944a61fb29c4`.
+- Product SHA-256: `0ded0fc7f51b49f6d4e80cd59d071661af7d248341f776eb5fdfd1a6cf34a884`.
 - Export checked every delivered JAR entry against the bundle installed in the
   passing game process: **all bytes equal**. No Minecraft or fixture classes ship.
 
@@ -86,7 +87,14 @@ tile ticks perform every transfer. The test checks:
 The final saved workshop is a fresh north-facing assembly with stocked chests and
 coal. It produces into the destination chest before export. The front and rear
 PNGs are untouched screenshots from its actual GL context. AeroModelLib rendered
-5676 triangles using 16 cached display lists, with exact 5 x 3 x 3 mesh bounds.
+5796 triangles using 16 cached display lists, with exact 5 x 3 x 3 mesh bounds.
+
+The 483-cuboid source centers the two feed mouths and product outlet at their
+block-face centers. The rear energy socket now has a visible recessed opening at
+local model pixels `(40,24,0)`. Four perimeter metal pieces are cut around the
+port frames; open-volume checks reject any remaining model solid inside each
+mouth. Runtime raycasts now target the centers of the product and energy recesses
+in all four orientations. The four original texture byte streams remain unchanged.
 
 ## Scope
 

@@ -22,7 +22,7 @@ public final class RefineryRenderProof {
                 RefineryFixture.check(GL11.glIsList(id),"AeroModelLib cached list exists in real GL context"); lists++;
             }
         }
-        RefineryFixture.check(triangles==5676,"all 473 cubes reached AeroModelLib");
+        RefineryFixture.check(triangles==5796,"all 483 cubes reached AeroModelLib");
         RefineryFixture.check(bounds[0]==-2 && bounds[1]==-1 && bounds[2]==-2
             && bounds[3]==3 && bounds[4]==2 && bounds[5]==1,"actual parsed mesh has exact 5x3x3 scale and master origin");
         RefineryFixture.check(lists>0 && lists<=16,"bounded cached brightness buckets");
@@ -32,8 +32,8 @@ public final class RefineryRenderProof {
         // Independent landmarks taken from the native model, in blocks; no Ports.kind-derived coordinates.
         ray(fixture,facing,new double[]{-1,.5,1.5},new double[]{.125,.5,1.5},0,0,1,4);
         ray(fixture,facing,new double[]{6,.5,1.5},new double[]{4.875,.5,1.5},4,0,1,5);
-        ray(fixture,facing,new double[]{2.3,.5,4},new double[]{2.3,.5,2.9375},2,0,2,3);
-        ray(fixture,facing,new double[]{2.45,1.05,-1},new double[]{2.45,1.05,.0625},2,1,0,2);
+        ray(fixture,facing,new double[]{2.5,.5,4},new double[]{2.5,.5,2.8125},2,0,2,3);
+        ray(fixture,facing,new double[]{2.5,1.5,-1},new double[]{2.5,1.5,.1875},2,1,0,2);
         ArrayList collision=new ArrayList();
         Block block=Block.blocksList[Structure.PART];
         RefineryTile tile=fixture.tile(2,2,1,facing);

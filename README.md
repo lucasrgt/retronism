@@ -118,6 +118,12 @@ are no longer in the production entrypoint.
 
 `assets/refinery.bbmodel` is the native source. `python tools/export_model.py
 assets/refinery.bbmodel` regenerates the four material meshes and clipped collision
-volumes. The 473 cuboids, four texture byte streams and 16-pixel block scale are
-preserved; the receipt records their hashes. One tilted cuboid uses its enclosing
+volumes. The model now has 483 cuboids: centered side/front ports, a recessed rear
+energy socket, and clearance cuts through the intersecting perimeter metal.
+The four texture byte streams and 16-pixel block scale are preserved; the receipt
+records their hashes. `tests/test_refinery_ports.py` checks the mouth clearances,
+face centers, runtime port semantics and correspondence with the exported meshes.
+`tools/sync_model_geometry.py` transfers native edits while retaining the game's
+material palette; its optional `--provenance` receipt preserves materials on cut
+fragments. One tilted cuboid uses its enclosing
 AABB for collision. See `CREDITS.md` for asset provenance and dependency credits.

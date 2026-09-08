@@ -4,6 +4,8 @@ param([string]$Worldline='C:/Users/lucas/dev/Worldline',
       [ValidateRange(1,4)][int]$NetworkOrientations=4)
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path $PSScriptRoot
+& python (Join-Path $projectRoot 'tests/test_refinery_ports.py')
+if($LASTEXITCODE -ne 0) { throw 'Refinery connector asset proof failed' }
 $runtimeRoot=Join-Path $Worldline '.worldline/runtime/legacy-testkit/workspaces/forge'
 & (Join-Path $PSScriptRoot 'build.ps1') -Worldline $Worldline -Loader forge
 & (Join-Path $PSScriptRoot 'test_unit.ps1') -Worldline $Worldline

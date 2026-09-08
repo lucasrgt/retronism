@@ -1,7 +1,7 @@
 {
-  "sourceSha256": "406e02a18ab4df3ee4bf5312e17f93c945ef1b5285c5b919b63fe37d3638d36f",
-  "cubes": 473,
-  "faces": 2838,
+  "sourceSha256": "966bdaf480d98bb521b5afb35c924759e81fc47746ff470275b0108cf3e19d40",
+  "cubes": 483,
+  "faces": 2898,
   "scale": "16 native pixels = 1 Minecraft block",
   "boundsBlocks": [
     5,
